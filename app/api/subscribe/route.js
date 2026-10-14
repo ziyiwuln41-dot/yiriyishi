@@ -22,6 +22,15 @@ function confirmEmail(token) {
 }
 
 export async function POST(req) {
+  try {
+    return await handle(req);
+  } catch (e) {
+    console.error("subscribe failed:", e);
+    return NextResponse.json({ ok: false, message: "服务器设置还没完成，请稍后再试。" }, { status: 500 });
+  }
+}
+
+async function handle(req) {
   let body;
   try { body = await req.json(); } catch { return NextResponse.json({ ok: false, message: "请求格式不对。" }, { status: 400 }); }
 
