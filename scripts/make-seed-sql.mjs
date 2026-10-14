@@ -16,5 +16,6 @@ for (const i of read("content/issues")) {
   sql += `insert into issues (date, week_start, theme, content, approved) values (${q(date)}, ${q(week_start)}, ${q(theme)}, ${lit(content)}, ${approved})
 on conflict (date) do update set week_start = excluded.week_start, theme = excluded.theme, content = excluded.content, approved = excluded.approved, updated_at = now();\n\n`;
 }
+if (fs.existsSync("supabase/cleanup.sql")) sql += "\n" + fs.readFileSync("supabase/cleanup.sql", "utf8");
 fs.writeFileSync("supabase/seed.sql", sql);
 console.log("Wrote supabase/seed.sql");
