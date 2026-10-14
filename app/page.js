@@ -20,7 +20,7 @@ export default async function Home() {
 
       <section className="card" aria-labelledby="sub-h">
         <h2 id="sub-h">每天早上六点，一首诗、一个成语</h2>
-        <p>写给中文底子不错的 JC 学生。不教你早就会的，只教你还不熟的。</p>
+        <p>每天清晨，留一盏茶的时间给文字。三千年的诗意，一天一点，慢慢读进心里。</p>
         <SignupForm />
       </section>
 
