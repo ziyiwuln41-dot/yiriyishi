@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, todaySGT, mondayOf, SITE } from "../../../../lib/server.mjs";
 import { renderIssue, renderWeek } from "../../../../lib/render.mjs";
-import { sendMany, unsubscribeUrl } from "../../../../lib/mail.mjs";
+import { sendMany, sendOne, unsubscribeUrl } from "../../../../lib/mail.mjs";
 
 export const maxDuration = 60;
 
@@ -12,6 +12,26 @@ export async function POST(req) {
   if (!process.env.CRON_SECRET || req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
+  // Test mode: {"test_to": "you@example.com", "date": "2026-10-19"} sends that day's
+  // emails to one address only. Subscribers and send_log are not touched.
+  const body = await req.json().catch(() => ({}));
+  if (body.test_to) {
+    const d = /^\d{4}-\d{2}-\d{2}$/.test(body.date || "") ? body.date : todaySGT();
+    const opts = { siteUrl: SITE.url, unsubscribeUrl: SITE.url + "/unsubscribe", mode: "email" };
+    const sent = [];
+    const { data: week } = await db().from("weeks").select("*").eq("week_start", mondayOf(d)).maybeSingle();
+    if (week && d === week.week_start) {
+      await sendOne({ to: body.test_to, rendered: renderWeek({ ...week.content, week_start: week.week_start, era: week.era, theme: week.theme }, opts) });
+      sent.push("weekly");
+    }
+    const { data: issue } = await db().from("issues").select("*").eq("date", d).maybeSingle();
+    if (issue) {
+      await sendOne({ to: body.test_to, rendered: renderIssue({ ...issue.content, date: issue.date, theme: issue.theme }, opts) });
+      sent.push("daily");
+    }
+    return NextResponse.json({ ok: true, test: true, date: d, sent });
+  }
+
   const date = todaySGT();
   const report = { date, weekly: null, daily: null };
 
