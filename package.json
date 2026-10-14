@@ -19,7 +19,8 @@
     "resend": "^6.1.0"
   },
   "devDependencies": {
-    "@resvg/resvg-js": "^2.6.2"
+    "@resvg/resvg-js": "^2.6.2",
+    "opentype.js": "^1.3.4"
   },
   "private": true,
   "engines": {
