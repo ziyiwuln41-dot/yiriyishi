@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { env } from "../../../../lib/env.mjs";
 import { db, todaySGT, mondayOf, SITE } from "../../../../lib/server.mjs";
 import { renderIssue, renderWeek } from "../../../../lib/render.mjs";
 import { sendMany, sendOne, unsubscribeUrl } from "../../../../lib/mail.mjs";
@@ -9,7 +10,7 @@ export const maxDuration = 60;
 // On Mondays the weekly intro goes out first, then the daily email.
 // Safe to call twice: send_log stops anyone getting the same email again.
 export async function POST(req) {
-  if (!process.env.CRON_SECRET || req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!env("CRON_SECRET") || req.headers.get("authorization") !== `Bearer ${env("CRON_SECRET")}`) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
   // Test mode: {"test_to": "you@example.com", "date": "2026-10-19"} sends that day's
