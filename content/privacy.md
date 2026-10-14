@@ -1,13 +1,13 @@
 # 隐私声明 · Privacy Notice — 一日一诗
 
-*Last updated: [launch date]*
+*Last updated: 14 October 2026 (launch day)*
 
 **简要说明：** 我们只收集你的电子邮箱，用来每天早上寄出一日一诗。不卖、不分享、不追踪。你随时可以退订，退订后邮箱会被删除。
 
 ---
 
 ## Who runs this
-一日一诗 is a free, non-commercial Chinese poetry and 成语 newsletter run by Ziyi in Singapore. Questions about your data: **[contact email]**. I am the person responsible for data protection for this site.
+一日一诗 is a free, non-commercial Chinese poetry and 成语 newsletter run by Ziyi in Singapore. Questions about your data: **ziyiwuln41@gmail.com**. I am the person responsible for data protection for this site.
 
 ## What I collect
 - **Your email address.** That is the only thing you give me.
@@ -22,7 +22,7 @@ Only to send you the daily email (6:00am SGT) and the weekly Monday introduction
 You sign up yourself, then confirm by clicking a link in a confirmation email. Nothing is sent until you confirm. If you are under 13, please ask a parent or guardian before signing up.
 
 ## Unsubscribing and deletion
-Every email has an **unsubscribe link** at the bottom. One click stops all emails, and your address is **deleted within 30 days**. You can also email **[contact email]** to:
+Every email has an **unsubscribe link** at the bottom. One click stops all emails, and your address is **deleted within 30 days**. You can also email **ziyiwuln41@gmail.com** to:
 - ask what data I hold about you,
 - correct your email address, or
 - ask me to delete it.
@@ -43,7 +43,7 @@ Your email is stored in a database that the public cannot read. Access is limite
 Only while you are subscribed. Unconfirmed sign-ups are deleted after 7 days.
 
 ## Content
-Classical poems are in the public domain. Explanations and commentary are written or edited by me; AI tools may help draft some explanations, and everything is reviewed before sending. If you believe any content infringes your rights, contact **[contact email]** and I will remove it promptly.
+Classical poems are in the public domain. Explanations and commentary are written or edited by me; AI tools may help draft some explanations, and everything is reviewed before sending. If you believe any content infringes your rights, contact **ziyiwuln41@gmail.com** and I will remove it promptly.
 
 ## Changes
 If this notice changes in a way that matters, I'll tell subscribers by email before the change takes effect.
