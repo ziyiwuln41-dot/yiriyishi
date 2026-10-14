@@ -20,6 +20,12 @@ export async function POST(req) {
   // emails to one address only. Subscribers and send_log are not touched.
   const body = await req.json().catch(() => ({}));
   if (body.test_to) {
+    // Test sends only go to the site's contact address or an already-confirmed subscriber.
+    const to = String(body.test_to).trim().toLowerCase();
+    const { data: known } = await db().from("subscribers").select("id").eq("email", to).not("confirmed_at", "is", null).is("unsubscribed_at", null).maybeSingle();
+    if (to !== SITE.contact.toLowerCase() && !known) {
+      return NextResponse.json({ ok: false, error: "test_to must be your contact email or a confirmed subscriber" }, { status: 403 });
+    }
     const d = /^\d{4}-\d{2}-\d{2}$/.test(body.date || "") ? body.date : todaySGT();
     const opts = { siteUrl: SITE.url, unsubscribeUrl: SITE.url + "/unsubscribe", mode: "email" };
     const sent = [];
