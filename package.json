@@ -1,0 +1,28 @@
+{
+  "name": "yiriyishi",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "poem:image": "node scripts/render-poem.mjs",
+    "preview:email": "node scripts/preview-email.mjs",
+    "content:push": "node --env-file=.env.local scripts/push-content.mjs",
+    "content:sql": "node scripts/make-seed-sql.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "lxgw-wenkai-webfont": "^1.7.0",
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "resend": "^6.1.0"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  }
+}
