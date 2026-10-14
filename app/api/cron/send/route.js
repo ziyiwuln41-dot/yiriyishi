@@ -10,7 +10,10 @@ export const maxDuration = 60;
 // On Mondays the weekly intro goes out first, then the daily email.
 // Safe to call twice: send_log stops anyone getting the same email again.
 export async function POST(req) {
-  if (!env("CRON_SECRET") || req.headers.get("authorization") !== `Bearer ${env("CRON_SECRET")}`) {
+  // Trim both sides: a pasted secret often carries an invisible space or line break.
+  const secret = (env("CRON_SECRET") || "").trim();
+  const given = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "").trim();
+  if (!secret || given !== secret) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
   // Test mode: {"test_to": "you@example.com", "date": "2026-10-19"} sends that day's
