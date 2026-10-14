@@ -16,6 +16,7 @@ function confirmEmail(token) {
 <p style="margin:0 0 6px;font-size:24px;font-weight:bold">一日一诗</p>
 <p style="margin:0 0 18px">差一步就好。点下面的按钮确认订阅，明早六点，第一封信就会到。</p>
 <p style="margin:0 0 22px"><a href="${link}" style="display:inline-block;background:${C.bamboo};color:#fff;text-decoration:none;padding:10px 22px;border-radius:4px">确认订阅</a></p>
+<p style="margin:0 0 10px;font-size:14px;color:${C.muted}">如果这封信在垃圾邮件里，请点「不是垃圾邮件」，并把 daily@yiriyishiziyi.com 加进通讯录，以后的诗就会准时出现在收件箱。</p>
 <p style="margin:0;font-size:13px;color:${C.muted}">如果不是你本人订阅，忽略这封信即可，我们不会再联系你。</p>
 </div></div>`,
   };
