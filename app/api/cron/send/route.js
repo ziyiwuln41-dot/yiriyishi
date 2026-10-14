@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { env } from "../../../../lib/env.mjs";
-import { db, todaySGT, mondayOf, SITE } from "../../../../lib/server.mjs";
+import { db, todaySGT, SITE } from "../../../../lib/server.mjs";
 import { renderIssue, renderWeek } from "../../../../lib/render.mjs";
 import { sendMany, sendOne, unsubscribeUrl } from "../../../../lib/mail.mjs";
 
 export const maxDuration = 60;
 
 // Called at 06:00 SGT by Supabase Cron (see supabase/schedule.sql).
-// On Mondays the weekly intro goes out first, then the daily email.
+// On a theme block's start date its intro goes out first, then the daily email.
 // Safe to call twice: send_log stops anyone getting the same email again.
 export async function POST(req) {
   // Trim both sides: a pasted secret often carries an invisible space or line break.
@@ -23,8 +23,8 @@ export async function POST(req) {
     const d = /^\d{4}-\d{2}-\d{2}$/.test(body.date || "") ? body.date : todaySGT();
     const opts = { siteUrl: SITE.url, unsubscribeUrl: SITE.url + "/unsubscribe", mode: "email" };
     const sent = [];
-    const { data: week } = await db().from("weeks").select("*").eq("week_start", mondayOf(d)).maybeSingle();
-    if (week && d === week.week_start) {
+    const { data: week } = await db().from("weeks").select("*").eq("week_start", d).maybeSingle();
+    if (week) {
       await sendOne({ to: body.test_to, rendered: renderWeek({ ...week.content, week_start: week.week_start, era: week.era, theme: week.theme }, opts) });
       sent.push("weekly");
     }
@@ -59,12 +59,12 @@ export async function POST(req) {
   }
 
   try {
-    if (date === mondayOf(date)) {
-      const { data: week } = await db().from("weeks").select("*").eq("week_start", date).maybeSingle();
-      if (week) {
-        const w = { ...week.content, week_start: week.week_start, era: week.era, theme: week.theme };
-        report.weekly = await deliver("weekly", date, (o) => renderWeek(w, o));
-      }
+    // A theme block can start on any day (Week 1 starts on a Wednesday).
+    // Its intro goes out on that start date, before the daily email.
+    const { data: week } = await db().from("weeks").select("*").eq("week_start", date).maybeSingle();
+    if (week) {
+      const w = { ...week.content, week_start: week.week_start, era: week.era, theme: week.theme };
+      report.weekly = await deliver("weekly", date, (o) => renderWeek(w, o));
     }
     const { data: issue } = await db().from("issues").select("*").eq("date", date).eq("approved", true).maybeSingle();
     if (issue) {

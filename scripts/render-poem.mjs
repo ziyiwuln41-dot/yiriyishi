@@ -26,18 +26,24 @@ const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 function buildSvg(poem) {
   // Each column is one phrase pair, e.g. 关关雎鸠 / 在河之洲, with a breath between them.
   // A stanza boundary (one entry in poem.lines) gets a wider gap between columns.
+  // Long sentences (e.g. 伐檀) are broken into columns of at most two phrases.
   const cols = [];
   poem.lines.forEach((line, li) => {
-    strip(line).split("。").filter(Boolean).forEach((sentence, si) => {
-      const c = sentence.split("，").map((p) => [...p.replace(/[，。、；！？]/g, "")]);
-      c.stanzaStart = si === 0 && li > 0;
-      cols.push(c);
-    });
+    let first = true;
+    for (const sentence of strip(line).split(/[。！？；]/).filter((x) => x.trim())) {
+      const phrases = sentence.split(/[，、：]/).map((p) => [...p.replace(/[^\p{Script=Han}]/gu, "")]).filter((p) => p.length);
+      for (let i = 0; i < phrases.length; i += 2) {
+        const c = phrases.slice(i, i + 2);
+        c.stanzaStart = first && li > 0;
+        first = false;
+        cols.push(c);
+      }
+    }
   });
   const size = 44, step = 58, colGap = 86, pad = 70, phraseGap = 30;
   const colHeight = (c) => c.reduce((h, p) => h + p.length * step, 0) + (c.length - 1) * phraseGap;
   const maxH = Math.max(...cols.map(colHeight));
-  const titleChars = [...poem.title];
+  const titleChars = [...poem.title.replace(/（.*?）/g, "")];
   const stanzaGap = 34;
   const stanzas = cols.filter((c) => c.stanzaStart).length;
   const width = pad * 2 + (cols.length + 1) * colGap + 30 + stanzas * stanzaGap;
