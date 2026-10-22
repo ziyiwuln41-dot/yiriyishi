@@ -43,7 +43,8 @@ function buildSvg(poem) {
   // A stanza boundary (one entry in poem.lines) gets a wider gap between columns.
   // Long sentences (e.g. 伐檀) are broken into columns of at most two phrases.
   const cols = [];
-  poem.lines.forEach((line, li) => {
+  // poem.imageLines (optional) lets prose pieces like 渔父 show only their key lines.
+  (poem.imageLines || poem.lines).forEach((line, li) => {
     let first = true;
     for (const sentence of strip(line).split(/[。！？；]/).filter((x) => x.trim())) {
       const phrases = sentence.split(/[，、：]/).map((p) => [...p.replace(/[^\p{Script=Han}]/gu, "")]).filter((p) => p.length);
@@ -62,7 +63,10 @@ function buildSvg(poem) {
   const stanzaGap = 34;
   const stanzas = cols.filter((c) => c.stanzaStart).length;
   const width = pad * 2 + (cols.length + 1) * colGap + 30 + stanzas * stanzaGap;
-  const height = pad * 2 + Math.max(maxH, titleChars.length * 68 + 120);
+  const srcChars = [...poem.source.replace(/[《》 ·]/g, "")];
+  const srcEnd = pad + 56 + titleChars.length * 68 + 40 + (srcChars.length - 1) * 30;
+  // Leave room so the seal always sits below the source label.
+  const height = Math.max(pad * 2 + Math.max(maxH, titleChars.length * 68 + 120), srcEnd + 30 + 62 + pad);
 
   let out = "";
   // Title column on the far right, larger.
@@ -70,7 +74,7 @@ function buildSvg(poem) {
   titleChars.forEach((ch, i) => {
     out += `<text x="${x}" y="${pad + 56 + i * 68}" font-size="56" fill="#273026" text-anchor="middle"${heavy(ch)}>${esc(ch)}</text>`;
   });
-  [...poem.source.replace(/[《》 ·]/g, "")].forEach((ch, i) => {
+  srcChars.forEach((ch, i) => {
     out += `<text x="${x}" y="${pad + 56 + titleChars.length * 68 + 40 + i * 30}" font-size="22" fill="#6E776A" text-anchor="middle">${esc(ch)}</text>`;
   });
   x -= colGap + 30;
@@ -87,7 +91,7 @@ function buildSvg(poem) {
     x -= colGap;
   }
   // z.y. seal, bottom of the title column.
-  const sx = width - pad - colGap / 2 - 31, sy = height - pad - 62;
+  const sx = width - pad - colGap / 2 - 31, sy = Math.max(height - pad - 62, srcEnd + 30);
   out += `<g transform="rotate(-4 ${sx + 30} ${sy + 30})"><rect x="${sx}" y="${sy}" width="62" height="62" rx="5" fill="none" stroke="#A8432F" stroke-width="4"/>
   <text x="${sx + 31}" y="${sy + 41}" font-size="24" fill="#A8432F" text-anchor="middle" font-weight="bold" font-family="LXGW WenKai">z.y.</text></g>`;
 
