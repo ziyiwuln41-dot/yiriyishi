@@ -1,5 +1,9 @@
 import "lxgw-wenkai-webfont/style.css";
 import "./globals.css";
+import { getCurrentPalette } from "../lib/server.mjs";
+import { paletteCss } from "../lib/palettes.mjs";
+
+export const revalidate = 300;
 
 const description = "每天清晨六点，一首诗、一个成语。三千年的诗意，一天一点，慢慢读进心里。";
 
@@ -20,9 +24,11 @@ export const metadata = {
   twitter: { card: "summary_large_image", title: "一日一诗", description, images: ["/poems/guanju.png"] },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const name = await getCurrentPalette();
   return (
     <html lang="zh-CN">
+      <head><style id="week-palette" dangerouslySetInnerHTML={{ __html: paletteCss(name) }} /></head>
       <body>{children}</body>
     </html>
   );
