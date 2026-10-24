@@ -29,7 +29,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="zh-CN">
       <head><style id="week-palette" dangerouslySetInnerHTML={{ __html: paletteCss(name) }} /></head>
-      <body>{children}</body>
+      <body><div className="shell">{children}</div></body>
     </html>
   );
 }

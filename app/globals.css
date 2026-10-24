@@ -9,6 +9,7 @@
   --line: #D9DFCF;
   --seal: #A8432F;
   --wash: rgba(150, 178, 138, 0.28);
+  --tile: none; --band: none; --mark: none; --divider: none; --seal-img: url(/seal/zhuqing.png); --gold: #4F7448;
   --font: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", serif;
   --ui: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
@@ -26,6 +27,7 @@ body {
   background:
     radial-gradient(ellipse 55% 40% at 88% 6%, var(--wash), transparent 70%),
     radial-gradient(ellipse 45% 35% at 6% 96%, var(--wash), transparent 70%),
+    var(--tile) repeat 0 0 / 220px auto,
     var(--page);
   background-attachment: fixed;
   color: var(--ink);
@@ -34,30 +36,44 @@ body {
   line-height: 1.85;
 }
 a { color: var(--bamboo); }
-.wrap {
-  max-width: 640px; margin: 0 auto;
-  padding-block: 56px 40px;
-  padding-left: max(18px, env(safe-area-inset-left, 0px));
-  padding-right: max(18px, env(safe-area-inset-right, 0px));
+/* The page is one sheet of paper laid on the week's ground, like the emails. */
+.shell {
+  padding-block: 36px 48px;
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
 }
+.wrap {
+  max-width: 680px; margin: 0 auto; position: relative;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 18px 50px -24px rgba(0,0,0,.35);
+  padding: 0 clamp(20px, 5vw, 44px) 36px; overflow: hidden;
+}
+.wrap::before {
+  content: ""; display: block; height: var(--band-h, 8px);
+  margin: 0 calc(-1 * clamp(20px, 5vw, 44px));
+  background: var(--band) center / 600px 64px repeat-x, var(--band-bg, var(--bamboo));
+}
+.wrap > :first-child { margin-top: 34px; }
+.ornament { height: 14px; margin: 34px auto 0; width: 150px; background: var(--divider) center / 150px 14px no-repeat; }
+.motif-note { margin: 14px 0 0; font-size: 12px; color: var(--muted); line-height: 1.7; }
 .seal {
-  display: inline-grid; place-items: center; width: 52px; height: 52px;
-  border: 2.5px solid var(--seal); color: var(--seal); border-radius: 5px;
-  font-weight: bold; font-size: 15px; transform: rotate(-4deg); flex: none;
+  display: block; width: 58px; height: 58px; flex: none; transform: rotate(-4deg);
+  background: var(--seal-img) center / contain no-repeat;
 }
 .mast { display: flex; align-items: center; gap: 18px; }
 .mast h1 { margin: 0; font-size: 46px; letter-spacing: 8px; line-height: 1.2; font-weight: normal; }
 .tagline { margin: 22px 0 0; color: var(--muted); font-size: 16px; text-wrap: balance; }
 .card {
-  background: var(--paper); border: 1px solid var(--line); border-radius: 6px;
-  padding: 26px 24px; margin-top: 34px;
+  background: var(--soft) var(--mark) right -10px bottom -18px / 170px auto no-repeat;
+  border: 1px solid var(--line); border-top: 2px solid var(--gold); border-radius: 6px;
+  padding: 26px 24px; margin-top: 30px;
 }
 .card h2 { margin: 0 0 6px; font-size: 21px; font-weight: normal; }
 .card p { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
 form.sub { display: flex; gap: 10px; flex-wrap: wrap; }
 form.sub input[type=email] {
   flex: 1 1 220px; min-width: 0; font: 16px var(--ui); padding: 11px 13px;
-  border: 1px solid var(--line); border-radius: 4px; background: var(--page); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink);
 }
 .btn {
   font: 16px var(--font); padding: 10px 22px; border-radius: 4px; cursor: pointer;
@@ -70,10 +86,10 @@ input:focus-visible, .btn:focus-visible, button:focus-visible, a:focus-visible {
 .msg.err { color: var(--seal) !important; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .what { margin: 30px 0 0; display: grid; gap: 10px; color: var(--muted); font-size: 15px; }
-.what b { color: var(--ink); font-weight: normal; }
+.what b { color: var(--bamboo); font-weight: normal; letter-spacing: 1px; }
 .archive-row { margin-top: 34px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 22px; }
 .archive-row span { color: var(--muted); font-size: 15px; }
-footer { margin-top: 48px; display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
 footer a { color: var(--muted); }
 
 /* Archive calendar */
@@ -95,5 +111,9 @@ a.day::after { content: "★"; position: absolute; top: 1px; right: 4px; font-si
 .prose h2 { font-size: 20px; font-weight: normal; color: var(--bamboo); margin: 28px 0 6px; }
 .prose p, .prose li { color: var(--ink); }
 .back { font-size: 15px; }
-.issue-frame { margin: 0 calc(-1 * max(18px, env(safe-area-inset-left, 0px))); }
+.wrap.bare { background: none; border: 0; box-shadow: none; padding: 0; max-width: 640px; overflow: visible; }
+.wrap.bare::before { display: none; }
+.wrap.bare > :first-child { margin-top: 0; }
+.wrap.bare .back a { display: inline-block; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 2px 12px; }
+.issue-frame { margin: 0 -12px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

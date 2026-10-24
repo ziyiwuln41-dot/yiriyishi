@@ -17,7 +17,7 @@ export default async function ArchiveDay({ params }) {
   if (!issue) notFound();
   const { body } = renderIssue(issue, { siteUrl: SITE.url, mode: "web" });
   return (
-    <main className="wrap" style={{ paddingTop: 24 }}>
+    <main className="wrap bare">
       <style dangerouslySetInnerHTML={{ __html: paletteCss(issue.palette) }} />
       <p className="back"><a href="/#archive">← 回到往期回顾</a></p>
       <div className="issue-frame" dangerouslySetInnerHTML={{ __html: body }} />

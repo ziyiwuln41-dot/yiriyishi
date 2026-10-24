@@ -16,32 +16,38 @@ function png(name, w, h, body) {
 const repeat = (n, step, f) => Array.from({ length: n }, (_, i) => f(i * step, i)).join("");
 
 // ── 楚漆 · 云气纹: the flowing cloud scrolls painted on Chu lacquerware ──
-{
-  const { accent: red, ink } = PALETTES.chuqi.light;
-  // One cloud curl: a long sweep that ends in a tight spiral, with a smaller counter-curl.
-  const curl = (x, y, s = 1, flip = 1) => `<g transform="translate(${x} ${y}) scale(${s * flip} ${s})">
-    <path d="M-60 18 C-40 18 -30 -14 0 -14 C22 -14 30 6 16 14 C6 20 -4 10 4 4 C9 1 13 6 10 9" fill="none" stroke="${red}" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M10 -14 C30 -26 52 -20 58 -4 C62 8 50 14 44 8 C40 4 44 -1 48 1" fill="none" stroke="${red}" stroke-width="2.2" stroke-linecap="round"/>
-    <circle cx="-48" cy="6" r="2.2" fill="${ink}"/></g>`;
-  // Header band: a running line of clouds between two fine lacquer-black rules.
-  png("chuqi-band.png", 600, 64,
-    `<g opacity="0.55">
-      <line x1="0" y1="6" x2="600" y2="6" stroke="${ink}" stroke-width="1"/>
-      <line x1="0" y1="10" x2="600" y2="10" stroke="${red}" stroke-width="0.8"/>
+function chuPatterns(name) {
+  const { accent: red, ink, gold } = PALETTES[name].light;
+  const cloud = gold || red; // clouds in gold when the palette has it, rules in ruby
+  const dark = PALETTES[name].light.page < "#5"; // a dark page needs a brighter tile
+  const curl = (x, y, s = 1, flip = 1, c = cloud) => `<g transform="translate(${x} ${y}) scale(${s * flip} ${s})">
+    <path d="M-60 18 C-40 18 -30 -14 0 -14 C22 -14 30 6 16 14 C6 20 -4 10 4 4 C9 1 13 6 10 9" fill="none" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M10 -14 C30 -26 52 -20 58 -4 C62 8 50 14 44 8 C40 4 44 -1 48 1" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="-48" cy="6" r="2.2" fill="${gold ? red : ink}"/></g>`;
+  png(`${name}-band.png`, 600, 64,
+    `<g opacity="${gold ? 0.85 : 0.55}">
+      <line x1="0" y1="6" x2="600" y2="6" stroke="${gold ? red : ink}" stroke-width="${gold ? 2 : 1}"/>
+      <line x1="0" y1="10" x2="600" y2="10" stroke="${cloud}" stroke-width="0.8"/>
       ${repeat(6, 120, (x, i) => curl(x + 66, 38, 0.82, i % 2 ? -1 : 1))}
-      <line x1="0" y1="58" x2="600" y2="58" stroke="${red}" stroke-width="0.8"/>
+      <line x1="0" y1="58" x2="600" y2="58" stroke="${cloud}" stroke-width="0.8"/>
     </g>`);
-  // Divider between sections: a single curl flanked by fading rules.
-  png("chuqi-divider.png", 300, 28,
-    `<defs><linearGradient id="f" x1="0" x2="1"><stop offset="0" stop-color="${red}" stop-opacity="0"/><stop offset="1" stop-color="${red}" stop-opacity="0.6"/></linearGradient>
-     <linearGradient id="g" x1="1" x2="0"><stop offset="0" stop-color="${red}" stop-opacity="0"/><stop offset="1" stop-color="${red}" stop-opacity="0.6"/></linearGradient></defs>
+  png(`${name}-divider.png`, 300, 28,
+    `<defs><linearGradient id="f" x1="0" x2="1"><stop offset="0" stop-color="${cloud}" stop-opacity="0"/><stop offset="1" stop-color="${cloud}" stop-opacity="0.7"/></linearGradient>
+     <linearGradient id="g" x1="1" x2="0"><stop offset="0" stop-color="${cloud}" stop-opacity="0"/><stop offset="1" stop-color="${cloud}" stop-opacity="0.7"/></linearGradient></defs>
      <rect x="0" y="13.5" width="105" height="1" fill="url(#f)"/><rect x="195" y="13.5" width="105" height="1" fill="url(#g)"/>
-     <g opacity="0.75">${curl(150, 16, 0.55)}</g>`);
-  // Watermark in the corner of the poem box.
-  png("chuqi-mark.png", 200, 140, `<g opacity="0.13">${curl(104, 70, 1.35)}${curl(70, 112, 0.8, -1)}</g>`);
-  // Faint tile for the page behind the card.
-  png("chuqi-tile.png", 220, 220, `<g opacity="0.07">${curl(60, 50, 0.6)}${curl(170, 160, 0.6, -1)}</g>`);
+     <g opacity="0.85">${curl(150, 16, 0.55)}</g>`);
+  png(`${name}-mark.png`, 200, 140, `<g opacity="${gold ? 0.2 : 0.13}">${curl(104, 70, 1.35)}${curl(70, 112, 0.8, -1)}</g>`);
+  if (name === "chuqi_sajin") {
+    // 洒金: irregular flecks of gold leaf scattered over the paper.
+    let r = 7; const rnd = () => ((r = (r * 9301 + 49297) % 233280) / 233280);
+    const flecks = Array.from({ length: 46 }, () => { const x = rnd() * 220, y = rnd() * 220, s = 0.8 + rnd() * 2.6, a = rnd() * 180;
+      return `<rect x="${x}" y="${y}" width="${s}" height="${s * (0.5 + rnd())}" transform="rotate(${a} ${x} ${y})" fill="${gold}" opacity="${0.35 + rnd() * 0.45}"/>`; }).join("");
+    png(`${name}-tile.png`, 220, 220, flecks);
+  } else {
+    png(`${name}-tile.png`, 220, 220, `<g opacity="${dark ? 0.22 : 0.07}">${curl(60, 50, 0.6)}${curl(170, 160, 0.6, -1)}</g>`);
+  }
 }
+chuPatterns("chuqi");
 
 // ── 汉砖 · 画像砖纹样: lozenges, coin rings and the four-petal 柿蒂纹 of Han tomb bricks ──
 {
