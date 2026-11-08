@@ -78,4 +78,26 @@ chuPatterns("chuqi");
       <rect x="-39.5" y="40.5" width="79" height="39"/><rect x="40.5" y="40.5" width="79" height="39"/><rect x="120.5" y="40.5" width="79" height="39"/>
     </g>`);
 }
+// ── 竹林 · 竹叶: bamboo sprigs in ink and indigo, for the 竹林七贤 ──
+{
+  const { accent: indigo, ink, gold: leafGreen } = PALETTES.zhulin.light;
+  // One sprig: a jointed stem and a fan of slender leaves.
+  const leaf = (x, y, ang, len = 34, c = indigo) => `<path transform="translate(${x} ${y}) rotate(${ang})" d="M0 0 C${len * 0.3} -4 ${len * 0.75} -3.5 ${len} 0 C${len * 0.75} 3.5 ${len * 0.3} 4 0 0 Z" fill="${c}"/>`;
+  const sprig = (x, y, s = 1, flip = 1) => `<g transform="translate(${x} ${y}) scale(${s * flip} ${s})">
+    <path d="M0 30 C2 10 4 -10 8 -30" stroke="${ink}" stroke-width="1.6" fill="none"/>
+    <path d="M1.5 12 l3 -1 M5 -10 l3 -1" stroke="${ink}" stroke-width="1.2"/>
+    ${leaf(4, -4, -40)}${leaf(4, -4, -10, 30, leafGreen)}${leaf(6, -18, -70, 28)}${leaf(2, 10, 20, 26, leafGreen)}${leaf(2, 10, -25, 24)}</g>`;
+  png("zhulin-band.png", 600, 64,
+    `<g opacity="0.7">
+      <line x1="0" y1="6" x2="600" y2="6" stroke="${ink}" stroke-width="1.2"/>
+      <line x1="0" y1="58" x2="600" y2="58" stroke="${indigo}" stroke-width="0.8"/>
+      ${repeat(8, 75, (x, i) => sprig(x + 30, 33, 0.72, i % 2 ? -1 : 1))}
+    </g>`);
+  png("zhulin-divider.png", 300, 28,
+    `<g opacity="0.75"><line x1="20" y1="14" x2="125" y2="14" stroke="${indigo}" stroke-width="1"/>
+     <line x1="175" y1="14" x2="280" y2="14" stroke="${indigo}" stroke-width="1"/>
+     ${leaf(150, 14, -160, 22)}${leaf(150, 14, -20, 22, leafGreen)}</g>`);
+  png("zhulin-mark.png", 170, 150, `<g opacity="0.14">${sprig(95, 80, 1.9)}</g>`);
+  png("zhulin-tile.png", 220, 220, `<g opacity="0.08">${sprig(55, 60, 0.8)}${sprig(165, 170, 0.8, -1)}</g>`);
+}
 console.log("patterns written");
