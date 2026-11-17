@@ -100,4 +100,30 @@ chuPatterns("chuqi");
   png("zhulin-mark.png", 170, 150, `<g opacity="0.14">${sprig(95, 80, 1.9)}</g>`);
   png("zhulin-tile.png", 220, 220, `<g opacity="0.08">${sprig(55, 60, 0.8)}${sprig(165, 170, 0.8, -1)}</g>`);
 }
+// ── 敦煌 · 忍冬纹: the wavy honeysuckle scroll of Northern Dynasties murals ──
+{
+  const { accent: green, gold: blue, seal: red, ink } = PALETTES.dunhuang.light;
+  // A three-lobed half-palmette leaf, curling off the stem.
+  const leaf = (x, y, flip, c) => `<g transform="translate(${x} ${y}) scale(1 ${flip})">
+    <path d="M0 0 C4 -10 14 -16 22 -14 C16 -11 12 -7 11 -2 C15 -9 22 -10 27 -6 C21 -5 16 -1 14 4 C17 0 22 1 24 5 C16 6 6 5 0 0 Z" fill="${c}"/></g>`;
+  const scroll = (w, y, amp, step, scale = 1) => {
+    let d = `M0 ${y}`;
+    for (let x = 0; x < w; x += step) d += ` Q${x + step / 4} ${y - amp} ${x + step / 2} ${y} T${x + step} ${y}`;
+    let leaves = "";
+    for (let x = 0, i = 0; x < w; x += step / 2, i++) {
+      const up = i % 2 === 0;
+      leaves += `<g transform="translate(${x + step / 4} ${y + (up ? -amp / 2 : amp / 2)}) scale(${scale})">${leaf(0, 0, up ? -1 : 1, i % 4 < 2 ? green : blue)}</g>`;
+      leaves += `<circle cx="${x + step / 2}" cy="${y}" r="${2 * scale}" fill="${red}"/>`;
+    }
+    return `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${1.4 * scale}" stroke-linecap="round"/>${leaves}`;
+  };
+  png("dunhuang-band.png", 600, 64,
+    `<g opacity="0.8"><rect x="0" y="3" width="600" height="3" fill="${red}"/><rect x="0" y="58" width="600" height="3" fill="${red}"/>
+     ${scroll(600, 32, 22, 80, 0.9)}</g>`);
+  png("dunhuang-divider.png", 300, 28, `<g opacity="0.85">${scroll(300, 14, 10, 60, 0.45)}</g>`.replace(/^/, "") );
+  png("dunhuang-mark.png", 180, 140, `<g opacity="0.15" transform="translate(30 20) scale(2.2)">${leaf(0, 20, -1, green)}${leaf(14, 30, 1, blue)}</g>`);
+  // The page behind the card is dark earth red, so the tile is drawn in pale paper colour.
+  const pale = (svg) => svg.replaceAll(green, "#F8F2E7").replaceAll(blue, "#F8F2E7").replaceAll(red, "#F8F2E7").replaceAll(ink, "#F8F2E7");
+  png("dunhuang-tile.png", 220, 220, `<g opacity="0.12">${pale(scroll(220, 55, 18, 110, 0.7) + scroll(220, 165, 18, 110, 0.7))}</g>`);
+}
 console.log("patterns written");
